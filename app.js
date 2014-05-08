@@ -8,12 +8,14 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes');
 var users = require('./routes/user');
-
+var files =require('./routes/files');
 var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+//set app param
+app.set('fileroot', 'C:\\work\\workspace\\nodejs\\File');
 
 app.use(favicon());
 app.use(logger('dev'));
@@ -27,6 +29,8 @@ app.use(app.router);
 app.get('/', routes.index);
 app.get('/users', users.list);
 app.get('/download', routes.download);
+
+app.get('/list', files.listfile);
 
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
@@ -56,6 +60,4 @@ app.use(function(err, req, res, next) {
         error: {}
     });
 });
-
-
 module.exports = app;
