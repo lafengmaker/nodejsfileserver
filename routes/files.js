@@ -1,27 +1,43 @@
 /** list root file and folder */
 var fs=require("fs"),
+ mime=require('./mime').mime,
  path = require('path');
 exports.listfile = function(req, res){
 	var app = require('../app');
 	var filename=req.query.name;
+	//var filename=req.params.fname;
 	if(!filename){
-		filename=app.get('fileroot');
+		filename="";
 	}
-	console.log(filename+"=====");
+	var fileroot=app.get('fileroot');
+	filename=path.join(fileroot,filename);
+	console.log(filename);	
 	fs.exists(filename,function(exists ){
 		if(exists){		
 			var stat=fs.statSync(filename);
-			console.log(filename+"====="+stat.isDirectory);
 			if(stat.isDirectory(filename)){
 				fs.readdir(filename,function(errors,files){
-				var li=convertfiletoMyFile(filename,files)
+				var li=convertfiletoMyFile(filename,files,fileroot)
 				res.render('filelist', { title:'文件列表','myfiles':li});
 			});
 			}else{
 				//res.send('This is a file'+filename);
-				fs.readfile(filename.function(error,data){
-				
-				res.render('read', { title:filename,'data':data});
+				fs.readFile(filename,function(error,data){
+					var contenttype=mime.lookupExtension(path.extname(filename));
+					console.log(contenttype);
+					if('text/plain'==contenttype || !contenttype){
+						filename=path.basename(filename);	
+						res.render('read', { 'title':filename,'data':data});
+					}else{
+						var statf=fs.statSync(filename);
+						res.writeHead(200,{'content-Type':contenttype,
+								'Content-Length':statf["size"],
+								'Server':'NodeJs('+process.version+')'});
+						res.write(data,'binary');
+						res.end;
+					}
+								
+					
 				});
 				
 			}
@@ -36,7 +52,7 @@ exports.listfile = function(req, res){
 	
 };
 
-function convertfiletoMyFile(parent,files){
+function convertfiletoMyFile(parent,files,fileroot){
 	var length=files.length;
 	var list= new Array(length);
 	var myFile=require('./myFile.js');
@@ -47,7 +63,8 @@ function convertfiletoMyFile(parent,files){
 		}else{
 			val=path.basename(val);
 		}
-		href=path.join(parent,val);
+		href=path.relative(fileroot,path.join(parent,val));
+		console.log(href)
 		var myf=new myFile(val,href,stat["size"]);
 		list[index]=myf;
 	});
