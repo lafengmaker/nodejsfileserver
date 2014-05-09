@@ -15,7 +15,7 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 //set app param
-app.set('fileroot', 'C:\\work\\workspace\\nodejs\\File');
+app.set('fileroot', '/home/lafeng/workspace/nodejsfileserver/assert');
 
 app.use(favicon());
 app.use(logger('dev'));

@@ -1,5 +1,3 @@
-mime.js
-
 var mime = {
 
   //查找文件后缀类型
