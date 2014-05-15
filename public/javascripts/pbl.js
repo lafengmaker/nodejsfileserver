@@ -2,12 +2,32 @@ window.onload = function(){
 	//运行瀑布流主函数 
 	PBL('wrap','box'); 
 	//模拟数据 
-	var data = [{'src':'1.jpg','title':'图片标题'},{'src':'2.jpg','title':'图片标题'},{'src':'3.jpg','title':'图片标题'},{'src':'4.jpg','title':'图片标题'},{'src':'5.jpg','title':'图片标题'},{'src':'6.jpg','title':'图片标题'},{'src':'7.jpg','title':'图片标题'}]; 
+	//var data = [{'src':'1.jpg','title':'图片标题'},{'src':'2.jpg','title':'图片标题'},{'src':'3.jpg','title':'图片标题'},{'src':'4.jpg','title':'图片标题'},{'src':'5.jpg','title':'图片标题'},{'src':'6.jpg','title':'图片标题'},{'src':'7.jpg','title':'图片标题'}]; 
 	//设置滚动加载 
+	//
+	var index=0;
 	window.onscroll = function(){ 
 	//校验数据请求 
 		if(getCheck()){ 
-			var wrap = document.getElementById('wrap'); 
+			$.ajax({
+  				type: "GET",
+  				url: '/loadImg',
+  				data: {index:index},
+  				success: function(data){
+					if(data){
+						showpbl(data);
+					}
+				},
+  				dataType: 'json'
+				});				
+			
+		} 
+	} 
+} 
+
+
+function showpbl(data){
+		var wrap = document.getElementById('wrap'); 
 			for(i in data){ 
 				//创建box 
 				var box = document.createElement('div'); 
@@ -23,7 +43,7 @@ window.onload = function(){
 				info.appendChild(pic); 
 				//创建img 
 				var img = document.createElement('img'); 
-				img.src = '/jscss/demoimg/201312/'+data[i].src; 
+				img.src = '/'+data[i].src; 
 				img.style.height = 'auto'; 
 				pic.appendChild(img); 
 				//创建title 
@@ -36,9 +56,8 @@ window.onload = function(){
 				title.appendChild(a); 
 			} 
 			PBL('wrap','box'); 
-		} 
-	} 
-} 
+
+}
 /** 
 * 瀑布流主函数 
 * @param wrap [Str] 外层元素的ID 

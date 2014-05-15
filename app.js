@@ -22,7 +22,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
+app.use(express.session({ secret: "fileserver" }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('/home/lafeng/workspace/nodejsfileserver/assert'));
 app.use(express.static(__dirname + "assert"));
 app.use(app.router);
 
@@ -30,8 +32,8 @@ app.get('/', routes.index);
 app.get('/users', users.list);
 app.get('/download', routes.download);
 
-app.get('/list', files.listfile);
-
+app.get('/list/(:showType)?', files.listfile);
+app.get('/loadImg',files.ajaxfiles);
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
