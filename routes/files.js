@@ -24,29 +24,13 @@ exports.listfile = function(req, res){
 				 });
 				var showType=req.params.showType;
 				if('img'==showType){
-					//files=files.filter(function(file){
-					//	var ext=path.extname(file);
-					//	if('.jpg'==ext||'.jpeg'==ext||'.gif'==ext||'.png'==ext){
-					//		return file;
-				//		}
-				//	});
-				//	files=converImg(filename,files,fileroot);
-				//	if(files && files.length>6){
-				//		var sublist= new Array(6);
-				//		var sessionlist= new Array(files.length-6);
-				//		console.log(files.length-6);
-				//		for(var index=0;index< files.length;index ++ ){
-				//			if(index<6){
-				//				sublist[index]=files[index];
-				//			}else{
-				//				sessionlist[index-6]=files[index].toJson();
-				//			}
-				//		}
-				//		files=sublist;
-				//		req.session.slist=sessionlist;
-				//	}
-					//res.render('images',{'title':'照片墙','myfiles':files});
-					res.render('images',{'title':'照片墙'});
+					files=files.filter(function(file){
+						var ext=path.extname(file);
+						if('.jpg'==ext||'.jpeg'==ext||'.gif'==ext||'.png'==ext){
+							return file;
+						}
+				 }); 
+					res.render('images',{'title':'照片墙','max':(files.length/10+1)});
 				}else{
 					var li=convertfiletoMyFile(filename,files,fileroot);
 					res.render('filelist', { title:'文件列表','myfiles':li});
@@ -114,7 +98,6 @@ exports.ajaxfiles=function(req, res){
 	}
 
 	var sessionfile=req.session.slist;
-	console.log(index);
 	if(!index){
 		index=1;
 	}
@@ -122,12 +105,10 @@ exports.ajaxfiles=function(req, res){
 	var end=index*10;
 	var start=end-10;
 	
-	console.log(start+"----------------------"+end);
 	if(end<sessionfile.length){
 		for(var j=start;sessionfile.length;j++){
 			if(j<end){
 				html+="<div class='item'> <img src='/"+sessionfile[j].image+"' width='"+sessionfile[j].width+"' height='"+sessionfile[j].height+"'> </div>";
-				console.log(html);
 			}else{
 				break;
 			}
